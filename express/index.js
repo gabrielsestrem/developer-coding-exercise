@@ -3,6 +3,15 @@ const { getTopWords } = require('./utils/tags')
 const app = express()
 const rootPostDir = '../assets/posts'
 
+const clientURL = 'http://localhost:3000'
+
+// add CORS support to the Blog server
+ app.use(function(req, res, next) {
+   res.header("Access-Control-Allow-Origin", clientURL);
+   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+   next();
+ });
+
 /**
  *  Returns the detail of an individual post in json, formatted as:
  * {
@@ -49,9 +58,9 @@ app.get('/posts', function (req, res) {
   fs.readdirAsync = function(dirname) {
       return new Promise(function(resolve, reject) {
           fs.readdir(dirname, function(err, filenames){
-              if (err) 
-                  reject(err); 
-              else 
+              if (err)
+                  reject(err);
+              else
                   resolve(filenames);
           });
       });
@@ -61,8 +70,8 @@ app.get('/posts', function (req, res) {
   fs.readFileAsync = function(filename, enc) {
       return new Promise(function(resolve, reject) {
           fs.readFile(rootPostDir + '/'+ filename, enc, function(err, data){
-              if (err) 
-                  reject(err); 
+              if (err)
+                  reject(err);
               else
                   resolve(data);
           });
@@ -74,7 +83,7 @@ app.get('/posts', function (req, res) {
       return fs.readFileAsync(filename, 'utf8');
   }
 
-  // read all md files in the directory, filter out those needed to process, and using Promise.all to time when all async readFiles has completed. 
+  // read all md files in the directory, filter out those needed to process, and using Promise.all to time when all async readFiles has completed.
   fs.readdirAsync(rootPostDir).then(function (filenames){
       return Promise.all(filenames.map(getFile));
   }).then(function (files){
@@ -82,15 +91,16 @@ app.get('/posts', function (req, res) {
       files.forEach(function(data) {
         // Extract the Title from the file content
         const title = data.substring(
-          data.lastIndexOf("Title:") + 7, 
+          data.lastIndexOf("Title:") + 7,
           data.lastIndexOf("Author:") -1);
-        // Extract the Slug from the file content  
+        // Extract the Slug from the file content
         const slug = data.substring(
-          data.lastIndexOf("Slug:") + 6, 
+          data.lastIndexOf("Slug:") + 6,
           data.lastIndexOf("===") -1);
 
         responseObject.push({title: title, slug: slug});
       });
+      console.log('New Request')
       res.json(responseObject)
   });
 })
