@@ -1,7 +1,7 @@
 const express = require('express')
 const { getTopWords } = require('./utils/tags')
 const app = express()
-const rootPostDir = './server/assets/posts'
+const rootPostDir = '../assets/posts'
 
 /**
  *  Returns the detail of an individual post in json, formatted as:
@@ -13,7 +13,23 @@ const rootPostDir = './server/assets/posts'
  * }
  */
 app.get('/post/:slug', function (req, res) {
-  // ... fill in your own code ...
+  const fileName = req.params.slug;
+  const path = rootPostDir + '/' + fileName + '.md';
+  const fs = require('fs');
+  fs.readFile(path, 'utf8', function(err, data) {
+    if(err) {
+      console.log(err);
+    }
+    // Removing the header from the content
+    const body = data.substring(
+      data.lastIndexOf("#") + 2);
+
+    //TO DO - Implement the tags using getTopWords
+    const tags = getTopWords(body);
+
+    res.json({content: body, tags: tags})
+
+  });
 })
 
 /**
@@ -27,7 +43,56 @@ app.get('/post/:slug', function (req, res) {
  * ]
  */
 app.get('/posts', function (req, res) {
-  // ... fill in you own code ...
+  const fs = require('fs');
+
+  // make Promise version of fs.readdir()
+  fs.readdirAsync = function(dirname) {
+      return new Promise(function(resolve, reject) {
+          fs.readdir(dirname, function(err, filenames){
+              if (err) 
+                  reject(err); 
+              else 
+                  resolve(filenames);
+          });
+      });
+  };
+
+  // make Promise version of fs.readFile()
+  fs.readFileAsync = function(filename, enc) {
+      return new Promise(function(resolve, reject) {
+          fs.readFile(rootPostDir + '/'+ filename, enc, function(err, data){
+              if (err) 
+                  reject(err); 
+              else
+                  resolve(data);
+          });
+      });
+  };
+
+  // utility function, return Promise
+  function getFile(filename) {
+      return fs.readFileAsync(filename, 'utf8');
+  }
+
+  // read all md files in the directory, filter out those needed to process, and using Promise.all to time when all async readFiles has completed. 
+  fs.readdirAsync(rootPostDir).then(function (filenames){
+      return Promise.all(filenames.map(getFile));
+  }).then(function (files){
+      const responseObject = [];
+      files.forEach(function(data) {
+        // Extract the Title from the file content
+        const title = data.substring(
+          data.lastIndexOf("Title:") + 7, 
+          data.lastIndexOf("Author:") -1);
+        // Extract the Slug from the file content  
+        const slug = data.substring(
+          data.lastIndexOf("Slug:") + 6, 
+          data.lastIndexOf("===") -1);
+
+        responseObject.push({title: title, slug: slug});
+      });
+      res.json(responseObject)
+  });
 })
 
 app.listen(3000, function () {

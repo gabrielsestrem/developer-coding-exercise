@@ -30,7 +30,61 @@ const stopWords = [
  * @returns {[string]} - An array of the most frequently used non-Stopwords
  */
 function getTopWords (bodyText, tagCount = 5) {
-  // Write your own implementation
+  const cleanBody = removeStopWords(bodyText);
+  const tags = []
+
+  for(var i = 0, len = tagCount; i < len; i++){
+    const tag = getMostFrequentWord(cleanBody)
+    //removing the tag from the body
+    removeItemAll(cleanBody, tag)
+    tags.push(tag)
+  }
+  return tags;
+}
+
+function removeStopWords(bodyText) {
+  res = []
+  const words = bodyText.split(' ')
+  for(i=0;i<words.length;i++) {
+     const word_clean = words[i].split(".").join("").toLowerCase()
+     if(!stopWords.includes(word_clean)) {
+         res.push(word_clean)
+     }
+  }
+  return(res)
+}
+
+function getMostFrequentWord(bodyText) {
+  var counts = {};
+  var compare = 0;
+  var mostFrequent;
+  
+  for(var i = 0, len = bodyText.length; i < len; i++){
+      var word = bodyText[i];
+      
+      if(counts[word] === undefined){
+          counts[word] = 1;
+      }else{
+          counts[word] = counts[word] + 1;
+      }
+      if(counts[word] > compare){
+            compare = counts[word];
+            mostFrequent = bodyText[i];
+      }
+  }
+  return mostFrequent;
+}
+
+function removeItemAll(arr, value) {
+  var i = 0;
+  while (i < arr.length) {
+    if (arr[i] === value) {
+      arr.splice(i, 1);
+    } else {
+      ++i;
+    }
+  }
+  return arr;
 }
 
 module.exports = { getTopWords }
