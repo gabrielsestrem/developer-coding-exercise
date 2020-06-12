@@ -26,7 +26,6 @@ export default function Post( { match } ) {
           <h2>{post.title}</h2>
           <p>{post.content}</p>
           {post.tags && <h3>Tags</h3>}
-          {console.log(post.tags)}
           <strong>{post.tags && post.tags.join(", ")}</strong>
         </ul> 
     </div>
