@@ -32,6 +32,12 @@ app.get('/post/:slug', function (req, res) {
         if(err) {
           console.log(err);
         }
+
+        // Extract the Title from the file content
+        const title = data.substring(
+          data.lastIndexOf("Title:") + 7,
+          data.lastIndexOf("Author:") -1);
+
         // Removing the header from the content
         const body = data.substring(
           data.lastIndexOf("===") + 4);
@@ -40,7 +46,7 @@ app.get('/post/:slug', function (req, res) {
         const tags = getTopWords(body);
     
         console.log(`GET /post/${filename} - ${new Date()}`)
-        res.json({content: body, tags: tags})
+        res.json({title: title, content: body, tags: tags})
     
       });
     }
