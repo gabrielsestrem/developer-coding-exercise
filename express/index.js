@@ -31,11 +31,12 @@ app.get('/post/:slug', function (req, res) {
     }
     // Removing the header from the content
     const body = data.substring(
-      data.lastIndexOf("#") + 2);
+      data.lastIndexOf("===") + 4);
 
     //TO DO - Implement the tags using getTopWords
     const tags = getTopWords(body);
 
+    console.log('GET /post/' + fileName + ' - ' + new Date())
     res.json({content: body, tags: tags})
 
   });
@@ -100,7 +101,7 @@ app.get('/posts', function (req, res) {
 
         responseObject.push({title: title, slug: slug});
       });
-      console.log('New Request')
+      console.log('GET /posts' + ' - ' + new Date())
       res.json(responseObject)
   });
 })
