@@ -15,10 +15,11 @@ Blog Application using Node.js and ReactJS
 ### Running the WebAPI
 * You must have node installed
 
-1. In the terminal, navigate to the project directory
+1. Open the terminal
+2. Navigate to the project directory
 2. `cd express`
-2. `npm install`
-3. `yarn dev` or `node index.js`
+3. `yarn install` or `npm install`
+4. `yarn dev` or `node index.js`
 
 *Notes: Dev app listening on port 3333!
 
@@ -62,9 +63,11 @@ GET `/post/:slug` - Returns the blog content, including tags representing the mo
 
 ### Running the WebApp
 
-1. In the terminal, navigate to the project directory
-2. `cd blog`
-2. `yarn start` or `node start`
+1. Open a second the terminal
+2. Navigate to the project directory
+3. `cd blog`
+4. `yarn install` or `npm install`
+5. `yarn start` or `npm start`
 
 *Notes: Web app listening on port 3000!
 
