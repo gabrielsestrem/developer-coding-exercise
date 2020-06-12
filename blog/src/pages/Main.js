@@ -11,7 +11,7 @@ export default function Main( { history } ) {
       setPosts(response.data);
     }
     loadPosts(); 
-  })
+  }, [history])
 
   async function handleClick(slug, e) {   
     e.preventDefault();
