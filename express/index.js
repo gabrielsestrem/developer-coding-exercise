@@ -22,24 +22,38 @@ const clientURL = 'http://localhost:3000'
  * }
  */
 app.get('/post/:slug', function (req, res) {
-  const fileName = req.params.slug;
-  const path = rootPostDir + '/' + fileName + '.md';
+  const filename = req.params.slug;
+  const path = `${rootPostDir}/${filename}.md`;
   const fs = require('fs');
-  fs.readFile(path, 'utf8', function(err, data) {
-    if(err) {
-      console.log(err);
+  // Check if file exists
+  try {
+    if (fs.existsSync(path)) {
+      fs.readFile(path, 'utf8', function(err, data) {
+        if(err) {
+          console.log(err);
+        }
+        // Removing the header from the content
+        const body = data.substring(
+          data.lastIndexOf("===") + 4);
+    
+        //TO DO - Implement the tags using getTopWords
+        const tags = getTopWords(body);
+    
+        console.log(`GET /post/${filename} - ${new Date()}`)
+        res.json({content: body, tags: tags})
+    
+      });
     }
-    // Removing the header from the content
-    const body = data.substring(
-      data.lastIndexOf("===") + 4);
+    else {
+      console.log(`ERROR - GET /post/${filename} - ${new Date()} - no such file or directory`)
+      res.json({})
+    }
+  } catch(err) {
+    console.error(err)
+    res.json({})
+  }
 
-    //TO DO - Implement the tags using getTopWords
-    const tags = getTopWords(body);
 
-    console.log('GET /post/' + fileName + ' - ' + new Date())
-    res.json({content: body, tags: tags})
-
-  });
 })
 
 /**
@@ -70,7 +84,7 @@ app.get('/posts', function (req, res) {
   // make Promise version of fs.readFile()
   fs.readFileAsync = function(filename, enc) {
       return new Promise(function(resolve, reject) {
-          fs.readFile(rootPostDir + '/'+ filename, enc, function(err, data){
+          fs.readFile(`${rootPostDir}/${filename}`, enc, function(err, data){
               if (err)
                   reject(err);
               else
@@ -101,7 +115,7 @@ app.get('/posts', function (req, res) {
 
         responseObject.push({title: title, slug: slug});
       });
-      console.log('GET /posts' + ' - ' + new Date())
+      console.log(`GET /posts - ${new Date()}`)
       res.json(responseObject)
   });
 })
