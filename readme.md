@@ -2,12 +2,12 @@
 ### Media Suite Coding Exercise
 
 ## Overview
-Blog Application using Node.js and ReactJS
+Blog Application using Node.js and React
 
 **Server - NodeJS** 
 * Dependencies - express
 
-**Client - ReactJS** 
+**Client - React** 
 * Dependencies - axios, react-router-dom
 
 ## The Server
