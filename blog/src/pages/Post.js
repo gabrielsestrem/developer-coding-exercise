@@ -12,10 +12,6 @@ export default function Post( { match } ) {
       const postsResponse = response.data;
       setPost(postsResponse);
     }
-    const initial = {
-      tags: ["sssf", 'ee']
-    }
-    setPost(initial)
     loadPost(); 
 
   }, [match.params.slug])
