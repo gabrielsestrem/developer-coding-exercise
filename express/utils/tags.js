@@ -6,7 +6,7 @@ const stopWords = [
   'down', 'during', 'each', 'few', 'for', 'from', 'further', 'had', 'hadn\'t',
   'has', 'hasn\'t', 'have', 'haven\'t', 'having', 'he', 'he\'d', 'he\'ll', 'he\'s',
   'her', 'here', 'here\'s', 'hers', 'herself', 'him', 'himself', 'his', 'how',
-  'how\'s', 'i', 'i\'d', 'i\'ll', 'i\'m', 'i\'ve', 'if', 'in', 'into', 'is', 'isn\'t',
+  'how\'s', 'i', 'i\'d', 'i\'ll', 'i\'m', 'i’ve', 'i\'ve', 'if', 'in', 'into', 'is', 'isn\'t',
   'it', 'it\'s', 'its', 'itself', 'let\'s', 'me', 'more', 'most', 'mustn\'t', 'my',
   'myself', 'no', 'nor', 'not', 'of', 'off', 'on', 'once', 'only', 'or', 'other',
   'ought', 'our', 'ours', 'ourselves', 'out', 'over', 'own', 'same', 'shan\'t', 'she',
@@ -44,7 +44,7 @@ function getTopWords (bodyText, tagCount = 5) {
 
 function removeStopWords(bodyText) {
   res = []
-  const words = bodyText.split(' ')
+  const words = bodyText.match(/\S+/g)
   for(i=0;i<words.length;i++) {
      const word_clean = words[i].split(".").join("").toLowerCase()
      if(!stopWords.includes(word_clean)) {

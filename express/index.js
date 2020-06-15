@@ -4,6 +4,11 @@ const app = express()
 const rootPostDir = '../assets/posts'
 
 const clientURL = 'http://localhost:3000'
+const fs = require('fs');
+const title = "Title: "
+const author = "Author:"
+const slug = "Slug: "
+const headerSeparator = "==="
 
 // add CORS support to the Blog server
  app.use(function(req, res, next) {
@@ -24,7 +29,6 @@ const clientURL = 'http://localhost:3000'
 app.get('/post/:slug', function (req, res) {
   const filename = req.params.slug;
   const path = `${rootPostDir}/${filename}.md`;
-  const fs = require('fs');
   // Check if file exists
   try {
     if (fs.existsSync(path)) {
@@ -33,20 +37,14 @@ app.get('/post/:slug', function (req, res) {
           console.log(err);
         }
 
-        // Extract the Title from the file content
-        const title = data.substring(
-          data.lastIndexOf("Title:") + 7,
-          data.lastIndexOf("Author:") -1);
-
         // Removing the header from the content
         const body = data.substring(
-          data.lastIndexOf("===") + 4);
+          data.lastIndexOf(headerSeparator) + headerSeparator.length + 1);
     
-        //TO DO - Implement the tags using getTopWords
         const tags = getTopWords(body);
     
         console.log(`GET /post/${filename} - ${new Date()}`)
-        res.json({title: title, content: body, tags: tags})
+        res.json({title: getTitle(data), content: body, tags: tags})
     
       });
     }
@@ -73,8 +71,6 @@ app.get('/post/:slug', function (req, res) {
  * ]
  */
 app.get('/posts', function (req, res) {
-  const fs = require('fs');
-
   // make Promise version of fs.readdir()
   fs.readdirAsync = function(dirname) {
       return new Promise(function(resolve, reject) {
@@ -110,21 +106,26 @@ app.get('/posts', function (req, res) {
   }).then(function (files){
       const responseObject = [];
       files.forEach(function(data) {
-        // Extract the Title from the file content
-        const title = data.substring(
-          data.lastIndexOf("Title:") + 7,
-          data.lastIndexOf("Author:") -1);
-        // Extract the Slug from the file content
-        const slug = data.substring(
-          data.lastIndexOf("Slug:") + 6,
-          data.lastIndexOf("===") -1);
-
-        responseObject.push({title: title, slug: slug});
+        responseObject.push({title: getTitle(data), slug: getSlug(data)});
       });
       console.log(`GET /posts - ${new Date()}`)
       res.json(responseObject)
   });
 })
+
+  // Get Title from Post
+  function getTitle(data) {
+    return data.substring(
+      data.lastIndexOf(title) + title.length,
+      data.lastIndexOf(author) -1);
+}
+
+  // Get Slug from Post
+  function getSlug(data) {
+    return data.substring(
+      data.lastIndexOf(slug) + slug.length,
+      data.lastIndexOf(headerSeparator) -1);
+}
 
 app.listen(3333, function () {
   console.log('Dev app listening on port 3333!')
